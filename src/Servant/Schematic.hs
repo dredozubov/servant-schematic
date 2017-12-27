@@ -51,6 +51,8 @@ type family Schematize' (req :: Maybe q) (api :: k) :: l where
   Schematize' req (ReqBody cs (JsonRepr schema) :> sub) =
     Schematize'
       ('Just ("request" :> Get '[JSON] (Tagged schema D4.Schema))) sub
+  Schematize' req (a :<|> b) = Schematize' req a :<|> Schematize' req b
+  Schematize' req (a :> sub) = a :> Schematize' req sub
 
 type family Schematize (api :: k) :: l where
   Schematize api = Schematize' 'Nothing api
